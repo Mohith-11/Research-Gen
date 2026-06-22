@@ -5,7 +5,7 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* ─── Design Tokens ─── */
+/* ─── Design Tokens — Dark (default) ─── */
 :root {
   --ink-night: #080C18;
   --ink-deep:  #04060F;
@@ -24,6 +24,25 @@
   --dim:   #4B5169;
 }
 
+/* ─── Design Tokens — Light ─── */
+[data-theme="light"] {
+  --ink-night: #F8F9FC;
+  --ink-deep:  #EEF0F6;
+  --surface:   rgba(255, 255, 255, 0.70);
+  --surface-hover: rgba(255, 255, 255, 0.90);
+  --border:    rgba(0, 0, 0, 0.08);
+  --border-amber: rgba(200, 120, 30, 0.50);
+
+  --amber:     #C96D10;
+  --amber-glow: rgba(201, 109, 16, 0.12);
+  --teal:      #0E9488;
+  --violet:    #6D5FE0;
+
+  --text:  #111827;
+  --muted: #4B5563;
+  --dim:   #9CA3AF;
+}
+
 /* ─── Reset ─── */
 *, *::before, *::after {
   margin: 0;
@@ -40,14 +59,19 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background:
-    /* Ambient orb top-right */
     radial-gradient(ellipse 60% 50% at 80% -10%, rgba(155, 140, 255, 0.12), transparent),
-    /* Ambient orb bottom-left */
     radial-gradient(ellipse 50% 40% at -10% 110%, rgba(77, 208, 192, 0.10), transparent),
-    /* Amber glow center */
     radial-gradient(ellipse 40% 30% at 50% 20%, rgba(242, 166, 90, 0.06), transparent),
-    /* Base gradient */
     linear-gradient(170deg, var(--ink-night) 0%, var(--ink-deep) 100%);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="light"] body {
+  background:
+    radial-gradient(ellipse 60% 50% at 80% -10%, rgba(155, 140, 255, 0.06), transparent),
+    radial-gradient(ellipse 50% 40% at -10% 110%, rgba(77, 208, 192, 0.05), transparent),
+    radial-gradient(ellipse 40% 30% at 50% 20%, rgba(201, 109, 16, 0.04), transparent),
+    linear-gradient(170deg, #F8F9FC 0%, #EEF0F6 100%);
 }
 
 /* ─── Animated grid overlay ─── */
@@ -63,7 +87,13 @@ body::before {
   z-index: 0;
 }
 
-/* ─── Floating orb animation ─── */
+[data-theme="light"] body::before {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+}
+
+/* ─── Keyframes ─── */
 @keyframes float-orb {
   0%, 100% { transform: translate(0, 0) scale(1); }
   33%       { transform: translate(20px, -30px) scale(1.05); }
@@ -92,9 +122,7 @@ body::before {
 }
 
 @keyframes spin-slow { to { transform: rotate(360deg); } }
-@keyframes dash {
-  to { stroke-dashoffset: 0; }
-}
+@keyframes dash { to { stroke-dashoffset: 0; } }
 
 /* ─── Utility classes ─── */
 .animate-fade-up   { animation: fade-up   0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
@@ -105,8 +133,9 @@ body::before {
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
 .delay-500 { animation-delay: 500ms; }
+.delay-700 { animation-delay: 700ms; }
 
-/* Shimmer text */
+/* ─── Shimmer text (hero headline) ─── */
 .text-shimmer {
   background: linear-gradient(
     120deg,
@@ -122,7 +151,7 @@ body::before {
   animation: shimmer 3s linear infinite;
 }
 
-/* Glass card */
+/* ─── Glass card ─── */
 .glass {
   background: var(--surface);
   backdrop-filter: blur(20px) saturate(1.5);
@@ -136,7 +165,12 @@ body::before {
   border: 1px solid rgba(242, 166, 90, 0.2);
 }
 
-/* Glow button */
+[data-theme="light"] .glass-amber {
+  background: rgba(201, 109, 16, 0.08);
+  border-color: rgba(201, 109, 16, 0.20);
+}
+
+/* ─── Amber CTA button ─── */
 .btn-amber {
   background: linear-gradient(135deg, #F2A65A 0%, #E8922A 100%);
   color: #0a0a0a;
@@ -144,12 +178,13 @@ body::before {
   border-radius: 14px;
   box-shadow: 0 4px 24px rgba(242, 166, 90, 0.3), 0 0 0 0 rgba(242, 166, 90, 0.4);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
 }
 .btn-amber:hover {
   box-shadow: 0 8px 32px rgba(242, 166, 90, 0.45), 0 0 0 4px rgba(242, 166, 90, 0.15);
   transform: translateY(-1px);
 }
-.btn-amber:active { transform: translateY(0); }
+.btn-amber:active  { transform: translateY(0); }
 .btn-amber:disabled {
   opacity: 0.4;
   cursor: not-allowed;
@@ -157,23 +192,121 @@ body::before {
   box-shadow: none;
 }
 
-/* Prose overrides for dark theme */
-.prose-research {
-  --tw-prose-body: #C8CDD8;
-  --tw-prose-headings: #EDEEF6;
-  --tw-prose-links: #F2A65A;
-  --tw-prose-bold: #EDEEF6;
-  --tw-prose-counters: #8D93AC;
-  --tw-prose-bullets: #4DD0C0;
-  --tw-prose-hr: rgba(255,255,255,0.08);
-  --tw-prose-quotes: #9B8CFF;
-  --tw-prose-quote-borders: #9B8CFF;
-  --tw-prose-code: #4DD0C0;
-  --tw-prose-pre-bg: rgba(0,0,0,0.4);
+[data-theme="light"] .btn-amber {
+  background: linear-gradient(135deg, #C96D10 0%, #A85508 100%);
+  color: #ffffff;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+/* ─── Prose overrides for dark theme ─── */
+.prose-research {
+  --tw-prose-body:          #C8CDD8;
+  --tw-prose-headings:      #EDEEF6;
+  --tw-prose-links:         #F2A65A;
+  --tw-prose-bold:          #EDEEF6;
+  --tw-prose-counters:      #8D93AC;
+  --tw-prose-bullets:       #4DD0C0;
+  --tw-prose-hr:            rgba(255,255,255,0.08);
+  --tw-prose-quotes:        #9B8CFF;
+  --tw-prose-quote-borders: #9B8CFF;
+  --tw-prose-code:          #4DD0C0;
+  --tw-prose-pre-bg:        rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] .prose-research {
+  --tw-prose-body:          #374151;
+  --tw-prose-headings:      #111827;
+  --tw-prose-links:         #C96D10;
+  --tw-prose-bold:          #111827;
+  --tw-prose-counters:      #6B7280;
+  --tw-prose-bullets:       #0E9488;
+  --tw-prose-hr:            rgba(0,0,0,0.10);
+  --tw-prose-quotes:        #6D5FE0;
+  --tw-prose-quote-borders: #6D5FE0;
+  --tw-prose-code:          #0E9488;
+  --tw-prose-pre-bg:        rgba(0,0,0,0.06);
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 999px;
+}
 ::-webkit-scrollbar-thumb:hover { background: rgba(242,166,90,0.4); }
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+}
+
+/* ─── Light mode: key Tailwind color overrides ─── */
+[data-theme="light"] .text-white        { color: var(--text) !important; }
+[data-theme="light"] .text-gray-400     { color: var(--muted) !important; }
+[data-theme="light"] .text-gray-500     { color: var(--muted) !important; }
+[data-theme="light"] .text-gray-600     { color: var(--dim) !important; }
+[data-theme="light"] .text-gray-700     { color: #6B7280 !important; }
+[data-theme="light"] .text-gray-800     { color: #9CA3AF !important; }
+[data-theme="light"] .text-amber-400    { color: var(--amber) !important; }
+[data-theme="light"] .bg-amber-400\/10  { background: rgba(201,109,16,0.10) !important; }
+[data-theme="light"] .border-white\/5   { border-color: rgba(0,0,0,0.06) !important; }
+[data-theme="light"] .border-white\/8   { border-color: rgba(0,0,0,0.08) !important; }
+[data-theme="light"] .border-white\/10  { border-color: rgba(0,0,0,0.10) !important; }
+[data-theme="light"] .bg-white\/\[0\.02\] { background: rgba(0,0,0,0.02) !important; }
+
+/* ─── Print / PDF stylesheet ─── */
+@media print {
+  /* Hide everything we don't want in the PDF */
+  nav,
+  aside,
+  .report-actions,
+  .report-meta-bar,
+  body::before,
+  .animate-float-orb {
+    display: none !important;
+  }
+
+  /* Clean white page */
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  /* Report takes full width */
+  main,
+  .max-w-screen-xl,
+  section,
+  .flex-1 {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Remove glass effects for print */
+  .glass,
+  .glass-amber,
+  .report-prose-card {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  /* Prose colours for print */
+  .prose-research {
+    --tw-prose-body:     #374151;
+    --tw-prose-headings: #111827;
+    --tw-prose-links:    #111827;
+    --tw-prose-bold:     #111827;
+    --tw-prose-bullets:  #374151;
+    --tw-prose-code:     #374151;
+    --tw-prose-pre-bg:   #F3F4F6;
+  }
+
+  a { text-decoration: underline; color: inherit !important; }
+
+  /* Avoid bad page breaks */
+  h1, h2, h3, h4, pre, blockquote { page-break-inside: avoid; }
+
+  @page { margin: 1.5cm; }
+}
